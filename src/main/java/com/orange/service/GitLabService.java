@@ -610,12 +610,17 @@ public class GitLabService {
      * @param branchName le nom de la branche.
      * @return la clé Jira ou null si non trouvée.
      */
-    private String extractTicketKeyFromBranch(String branchName) {
-        String[] parts = branchName.split("-");
-        if (parts.length >= 2) {
-            return parts[0].toUpperCase() + "-" + parts[1];
+   private String extractTicketKeyFromBranch(String branchName) {
+        if (branchName == null || branchName.isEmpty()) {
+            return null;
         }
-        return null;
+
+        branchName = branchName.replace("\\", "/");
+
+        Pattern pattern = Pattern.compile("\\b[A-Z]+-\\d+\\b");
+        Matcher matcher = pattern.matcher(branchName);
+
+        return matcher.find() ? matcher.group() : null;
     }
 
     /**
